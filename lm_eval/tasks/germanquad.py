@@ -6,7 +6,6 @@ from functools import partial
 from math import exp
 
 import datasets
-from evaluate import load
 from lm_eval.base import Task, rf
 
 
