@@ -4,3 +4,6 @@ data/
 lm_cache
 .idea
 /lm_eval.egg-info/
+/wandb/
+/tests/testdata/
+/germanquad_results/

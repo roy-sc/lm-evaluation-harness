@@ -4,7 +4,11 @@ import logging
 import fnmatch
 import os
 
-from lm_eval import tasks, evaluator
+import jsonargparse
+import randomname as randomname
+import wandb as wandb
+
+from lm_eval import tasks, evaluator, utils
 
 logging.getLogger("openai").setLevel(logging.WARNING)
 
@@ -21,7 +25,7 @@ class MultiChoice:
     def __contains__(self, values):
         for value in values.split(","):
             if len(fnmatch.filter(self.choices, value)) == 0 and not _is_json_task(
-                value
+                    value
             ):
                 return False
 
@@ -33,7 +37,7 @@ class MultiChoice:
 
 
 def parse_args():
-    parser = argparse.ArgumentParser()
+    parser = jsonargparse.ArgumentParser()
     parser.add_argument("--model", required=True)
     parser.add_argument("--model_args", default="")
     parser.add_argument("--tasks", default=None, choices=MultiChoice(tasks.ALL_TASKS))
@@ -52,6 +56,8 @@ def parse_args():
     parser.add_argument("--check_integrity", action="store_true")
     parser.add_argument("--write_out", action="store_true", default=False)
     parser.add_argument("--output_base_path", type=str, default=None)
+    parser.add_argument("--wandb_on", type=bool, default=False)
+    parser.add_argument('--config', action=jsonargparse.ActionConfigFile)
 
     return parser.parse_args()
 
@@ -91,6 +97,21 @@ def main():
         with open(args.description_dict_path, "r") as f:
             description_dict = json.load(f)
 
+    if args.wandb_on:
+        wandb_mode = "online"
+    else:
+        wandb_mode = "disabled"
+    tasks_string = "TASK_" + "_".join(task_names)
+    model_args_dict = utils.simple_parse_args_string(args.model_args)
+    model_string = "MODEL_" + model_args_dict["pretrained"].replace("/","-")
+    wandb_run_name = randomname.get_name() + '_' + '_'.join(
+        [tasks_string, model_string])
+
+    wandb_run_group_name = f"llm_leaderboard_{tasks_string}_group"
+    # wandb.Settings._service_wait = 300
+
+    wandb.init(project="llm_leaderboard", entity="background-tool", config=vars(args), name=wandb_run_name,
+               mode=wandb_mode, group=wandb_run_group_name)
     results = evaluator.simple_evaluate(
         model=args.model,
         model_args=args.model_args,
@@ -119,6 +140,11 @@ def main():
         f"{args.model} ({args.model_args}), limit: {args.limit}, provide_description: {args.provide_description}, "
         f"num_fewshot: {args.num_fewshot}, batch_size: {args.batch_size}"
     )
+
+    wandb.log(results["results"])
+    for task_name in task_names:
+        file_name = args.output_base_path.join(f"{task_name}_write_out_info.json")
+        wandb.save(file_name)
     print(evaluator.make_table(results))
 
 

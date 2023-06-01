@@ -12,4 +12,4 @@ python main.py \
         --num_fewshot 3 \
         --limit 10 \
     --write_out \
-    --output_base_path "germanquad_results/flan_t5/model_output.txt"
+    --output_base_path "germanquad_results/flan_t5"
