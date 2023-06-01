@@ -41,7 +41,8 @@ setuptools.setup(
         "accelerate>=0.17.1",
         "jsonargparse",
         "pytest",
-        "randomname"
+        "randomname",
+        "wandb"
     ],
     extras_require={
         "dev": ["black", "flake8", "pre-commit", "pytest", "pytest-cov"],
