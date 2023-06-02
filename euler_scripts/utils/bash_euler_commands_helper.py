@@ -93,6 +93,7 @@ def main():
     shareholder_group = json_config["shareholder_group"]
     memory_per_cpu_gb = json_config["memory_per_cpu_gb"]
     gpu = json_config["gpu"]
+    num_gpus = json_config["num_gpus"]
     main_commmand = json_config["main_command"]
 
     log_file = log_file_path + randomname.get_name() + "-" + datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
@@ -105,7 +106,7 @@ def main():
         #                                   group=shareholder_group, main_command=main_commmand)
         command = get_slurm_euler_command(log_file=log_file, n_cpus=num_cpus, time=run_duration_hours,
                                           memory_per_core=memory_per_cpu_gb,
-                                          gpu_model=gpu,
+                                          gpu_model=gpu, n_gpus=num_gpus,
                                           group=shareholder_group, main_command=main_commmand)
     print(command)
 
