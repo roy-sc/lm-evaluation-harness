@@ -61,6 +61,8 @@ from . import pawsx
 from . import xnli
 from . import mgsm
 from . import germanquad
+from . import germeval2017
+from . import x_stance
 
 ########################################
 # Translation tasks
@@ -316,6 +318,8 @@ TASK_REGISTRY = {
     "crows_pairs_french_physical_appearance": crowspairs.CrowsPairsFrenchPhysicalAppearance,
     "crows_pairs_french_autre": crowspairs.CrowsPairsFrenchAutre,
     "germanquad_open_qa": germanquad.GermanQuadOpenDomainQATask,
+    "germeval2017": germeval2017.GermEval2017,
+    "x_stance_de": x_stance.XStanceDE,
     # Requires manual download of data.
     # "storycloze_2016": storycloze.StoryCloze2016,
     # "storycloze_2018": storycloze.StoryCloze2018,
