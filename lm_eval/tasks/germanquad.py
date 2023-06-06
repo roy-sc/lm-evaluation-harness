@@ -19,7 +19,7 @@ def _squad_metric(predictions, references):
 def _squad_agg(key, items):
     predictions, references = zip(*items)
 
-    return _squad_metric(predictions=predictions, references=references).get(key, 0)
+    return _squad_metric(predictions=predictions, references=references)[key]
 
 
 class GermanQuadOpenDomainQATask(Task):
@@ -73,13 +73,13 @@ class GermanQuadOpenDomainQATask(Task):
 
     def doc_to_text(self, doc):
         return (
-                "Background: "
+                "Kontext: "
                 + doc["context"]
                 + "\n\n"
-                + "Question: "
+                + "Frage: "
                 + doc["question"]
                 + "\n\n"
-                + "Answer:"
+                + "Antwort:"
         )
 
     def doc_to_target(self, doc):
@@ -87,8 +87,8 @@ class GermanQuadOpenDomainQATask(Task):
         if len(answer_list) > 0:
             answer = answer_list[0]
         else:
-            answer = "unanswerable"
-        return " " + answer
+            answer = 0  # "unanswerable"
+        return " " + str(answer)
 
     def construct_requests(self, doc, ctx):
         """Uses RequestFactory to construct Requests and returns an iterable of
@@ -103,8 +103,9 @@ class GermanQuadOpenDomainQATask(Task):
             part of the document for `doc`.
         """
         continuation = rf.greedy_until(ctx, {"until": ["\n"]})
-        is_unanswerable = rf.loglikelihood(ctx, " " + "unanswerable")
-        return continuation, is_unanswerable
+        # there are no unanswerable questions in GermanQuAD
+        # is_unanswerable = rf.loglikelihood(ctx, " " + "unanswerable")
+        return continuation  # , is_unanswerable
 
     def process_results(self, doc, results):
         """Take a single document and the LM results and evaluates, returning a
@@ -116,15 +117,15 @@ class GermanQuadOpenDomainQATask(Task):
         :param results:
             The results of the requests created in construct_requests.
         """
-        continuation, (logprob_unanswerable, _) = results
+        # continuation, (logprob_unanswerable, _) = results
         continuation = results
 
-        no_answer_probability = exp(logprob_unanswerable)
+        # no_answer_probability = exp(logprob_unanswerable)
 
         predictions = {
             "id": doc["id"],
             "prediction_text": continuation,
-            "no_answer_probability": no_answer_probability,
+            "no_answer_probability": 0  # no_answer_probability,
         }
 
         references = {
@@ -141,27 +142,6 @@ class GermanQuadOpenDomainQATask(Task):
                 predictions,
                 references,
             ),  # The F-score of predicted tokens versus the gold answer
-            "HasAns_exact": (
-                predictions,
-                references,
-            ),  # Exact match (the normalized answer exactly match the gold answer)
-            "HasAns_f1": (
-                predictions,
-                references,
-            ),  # The F-score of predicted tokens versus the gold answer
-            "NoAns_exact": (
-                predictions,
-                references,
-            ),  # Exact match (the normalized answer exactly match the gold answer)
-            "NoAns_f1": (
-                predictions,
-                references,
-            ),  # The F-score of predicted tokens versus the gold answer
-            "best_exact": (
-                predictions,
-                references,
-            ),  # Best exact match (with varying threshold)
-            "best_f1": (predictions, references),  # Best F1 (with varying threshold)
         }
 
     def aggregation(self):
@@ -177,24 +157,6 @@ class GermanQuadOpenDomainQATask(Task):
             "f1": partial(
                 _squad_agg, "f1"
             ),  # The F-score of predicted tokens versus the gold answer
-            "HasAns_exact": partial(
-                _squad_agg, "HasAns_exact"
-            ),  # Exact match (the normalized answer exactly match the gold answer)
-            "HasAns_f1": partial(
-                _squad_agg, "HasAns_f1"
-            ),  # The F-score of predicted tokens versus the gold answer
-            "NoAns_exact": partial(
-                _squad_agg, "NoAns_exact"
-            ),  # Exact match (the normalized answer exactly match the gold answer)
-            "NoAns_f1": partial(
-                _squad_agg, "NoAns_f1"
-            ),  # The F-score of predicted tokens versus the gold answer
-            "best_exact": partial(
-                _squad_agg, "best_exact"
-            ),  # Best exact match (with varying threshold)
-            "best_f1": partial(
-                _squad_agg, "best_f1"
-            ),  # Best F1 (with varying threshold)
         }
 
     def higher_is_better(self):
@@ -206,10 +168,4 @@ class GermanQuadOpenDomainQATask(Task):
         return {
             "exact": True,  # Exact match (the normalized answer exactly match the gold answer)
             "f1": True,  # The F-score of predicted tokens versus the gold answer
-            "HasAns_exact": True,  # Exact match (the normalized answer exactly match the gold answer)
-            "HasAns_f1": True,  # The F-score of predicted tokens versus the gold answer
-            "NoAns_exact": True,  # Exact match (the normalized answer exactly match the gold answer)
-            "NoAns_f1": True,  # The F-score of predicted tokens versus the gold answer
-            "best_exact": True,  # Best exact match (with varying threshold)
-            "best_f1": True,  # Best F1 (with varying threshold)
         }
