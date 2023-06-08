@@ -33,7 +33,6 @@ class GermanQuadOpenDomainQATask(Task):
         return True
 
     def has_validation_docs(self):
-        # TODO: Fill in the return with `True` if the Task has validation data; else `False`.
         return False
 
     def has_test_docs(self):

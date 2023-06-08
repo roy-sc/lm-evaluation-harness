@@ -91,13 +91,13 @@ class XStance(Task):
 
     def doc_to_text(self, doc):
         return (
-            self.TOPIC
-            + doc["question"]
-            + "\n\n"
-            + self.OPINION
-            + doc["comment"]
-            + "\n\n"
-            + self.STANCE
+                self.TOPIC
+                + doc["question"]
+                + "\n\n"
+                + self.OPINION
+                + doc["comment"]
+                + "\n\n"
+                + self.STANCE
         )
 
     def doc_to_target(self, doc):
@@ -178,7 +178,7 @@ class XStanceDE(XStance):
     DATASET_NAME = "de"
     TOPIC = "Thema: "
     OPINION = "Meine Meinung (dafür oder dagegen): "
-    STANCE = "Meine Meinung ist (dafür oder dagegen): "
+    STANCE = "Meine Meinung ist (dafür oder dagegen):"
     FAVOR = "dafür"
     AGAINST = "dagegen"
 

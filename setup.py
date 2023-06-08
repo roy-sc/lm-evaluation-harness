@@ -42,7 +42,8 @@ setuptools.setup(
         "jsonargparse",
         "pytest",
         "randomname",
-        "wandb"
+        "wandb",
+        "einops"
     ],
     extras_require={
         "dev": ["black", "flake8", "pre-commit", "pytest", "pytest-cov"],
