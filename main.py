@@ -101,14 +101,19 @@ def main():
         wandb_mode = "online"
     else:
         wandb_mode = "disabled"
-    tasks_string = "TASK_" + "_".join(task_names)
+
+    tasks_string = "TASK_" + "-".join(task_names)
     model_args_dict = utils.simple_parse_args_string(args.model_args)
-    model_string = "MODEL_" + model_args_dict["pretrained"].replace("/","-")
+    model_id = model_args_dict["pretrained"].replace("/", "-")
+    model_string = f"MODEL_{model_id}"
+    few_shot_string = f"{args.num_fewshot}-SHOT"
+
+    args.output_base_path = os.path.join(args.output_base_path, model_id)
+
     wandb_run_name = randomname.get_name() + '_' + '_'.join(
-        [tasks_string, model_string])
+        [tasks_string, model_string, few_shot_string])
 
     wandb_run_group_name = f"llm_leaderboard_{tasks_string}_group"
-    # wandb.Settings._service_wait = 300
 
     wandb.init(project="llm_leaderboard", entity="background-tool", config=vars(args), name=wandb_run_name,
                mode=wandb_mode, group=wandb_run_group_name)
