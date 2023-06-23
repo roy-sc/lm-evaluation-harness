@@ -321,7 +321,7 @@ TASK_REGISTRY = {
     "germanquad_open_qa": germanquad.GermanQuadOpenDomainQATask,
     "germeval2017": germeval2017.GermEval2017,
     "x_stance_de": x_stance.XStanceDE,
-    "cnndm_paraphrase": cnndm_paraphrase.CnnDMParaphraseTask,
+    "cnn_dm_paraphrase": cnndm_paraphrase.CnnDMParaphraseTask,
     # Requires manual download of data.
     # "storycloze_2016": storycloze.StoryCloze2016,
     # "storycloze_2018": storycloze.StoryCloze2018,
