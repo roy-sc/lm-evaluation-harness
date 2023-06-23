@@ -10,7 +10,7 @@ from lm_eval.metrics import mean
 class CnnDMParaphraseTask(Task):
     VERSION = 0
     # dataset as denoted in HuggingFace `datasets`.
-    DATASET_PATH = "mtc/cnn_dm_paraphrase"
+    DATASET_PATH = "mtc/cnn_dm_paraphrase_full"
     # `DATASET_PATH`. If there aren't specific subsets you need, leave this as `None`.
     DATASET_NAME = None
 
@@ -102,7 +102,7 @@ class CnnDMParaphraseTask(Task):
         original = doc["original_span"]
 
         parascore = self.para_scorer.free_score(cands=prediction, sources=original, batch_size=16)[0].item()
-
+        print(f"Score:{parascore}")
         return {
             "parascore": parascore
         }
