@@ -99,6 +99,7 @@ def main():
 
     if args.wandb_on:
         wandb_mode = "online"
+        os.environ["WANDB__SERVICE_WAIT"] = "300"
     else:
         wandb_mode = "disabled"
 
@@ -114,7 +115,6 @@ def main():
         [tasks_string, model_string, few_shot_string])
 
     wandb_run_group_name = f"llm_leaderboard_{tasks_string}_group"
-
     wandb.init(project="llm_leaderboard", entity="background-tool", config=vars(args), name=wandb_run_name,
                mode=wandb_mode, group=wandb_run_group_name)
     results = evaluator.simple_evaluate(
