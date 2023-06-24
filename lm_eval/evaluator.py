@@ -368,8 +368,9 @@ def evaluate(
                 encoding="utf8",
             ) as fp:
                 json.dump(write_out_info[task_name], fp, indent=4, ensure_ascii=False)
-
-    return {"results": dict(results), "versions": dict(versions)}
+    if not write_out:#todo: Change dependency that write_out has to be true for wandb to save data correctly
+        write_out_info = None
+    return {"results": dict(results), "versions": dict(versions), "write_out_info": write_out_info}
 
 
 def make_table(result_dict):

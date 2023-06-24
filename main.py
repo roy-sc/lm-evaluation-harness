@@ -5,6 +5,7 @@ import fnmatch
 import os
 
 import jsonargparse
+import pandas as pd
 import randomname as randomname
 import wandb as wandb
 
@@ -100,6 +101,9 @@ def main():
     if args.wandb_on:
         wandb_mode = "online"
         os.environ["WANDB__SERVICE_WAIT"] = "300"
+        if not args.write_out:
+            print("Wandb can only save task output, when write out is true. Therefore write out is set to true")
+            args.write_out = True
     else:
         wandb_mode = "disabled"
 
@@ -117,6 +121,7 @@ def main():
     wandb_run_group_name = f"llm_leaderboard_{tasks_string}_group"
     wandb.init(project="llm_leaderboard", entity="background-tool", config=vars(args), name=wandb_run_name,
                mode=wandb_mode, group=wandb_run_group_name)
+
     results = evaluator.simple_evaluate(
         model=args.model,
         model_args=args.model_args,
@@ -134,7 +139,6 @@ def main():
     )
 
     dumped = json.dumps(results, indent=2)
-    print(dumped)
 
     if args.output_path:
         os.makedirs(os.path.dirname(args.output_path), exist_ok=True)
@@ -146,11 +150,15 @@ def main():
         f"num_fewshot: {args.num_fewshot}, batch_size: {args.batch_size}"
     )
 
-    wandb.log(results["results"])
-    for task_name in task_names:
-        file_name = args.output_base_path.join(f"{task_name}_write_out_info.json")
-        wandb.save(file_name)
-    print(evaluator.make_table(results))
+    if args.wandb_on:
+        wandb.log(results["results"])
+        write_out_info = results["write_out_info"]
+        wandb.Table.MAX_ARTIFACTS_ROWS = 600000
+        for task_name, task_output in write_out_info.items():
+            df = pd.DataFrame.from_dict(task_output)
+            task_table = wandb.Table(dataframe=df)
+            wandb.log({task_name: task_table})
+        print(evaluator.make_table(results))
 
 
 if __name__ == "__main__":

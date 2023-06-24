@@ -17,13 +17,13 @@ class CnnDMParaphraseTask(Task):
     para_scorer = ParaScorer(lang="en", model_type='bert-base-uncased', device='cuda')
 
     def has_training_docs(self):
-        return True
+        return False
 
     def has_validation_docs(self):
         return False
 
     def has_test_docs(self):
-        return False
+        return True
 
     def training_docs(self):
         if self.has_training_docs():
@@ -55,7 +55,7 @@ class CnnDMParaphraseTask(Task):
             # `map(self._process_doc, self.dataset["test"])`
             # In most case you can leave this as is unless the dataset split is
             # named differently than the default `"test"`.
-            return self.dataset["test"]
+            return self.dataset["train"]
 
     def doc_to_text(self, doc):
         return (
@@ -65,8 +65,9 @@ class CnnDMParaphraseTask(Task):
         )
 
     def doc_to_target(self, doc):
-        raise NotImplementedError(
-            "We have no targets for the paraphrasing task. Therefore, fewshot training is not possible!")
+        return doc["original_span"]
+        # raise NotImplementedError(
+        #     "We have no targets for the paraphrasing task. Therefore, fewshot training is not possible!")
 
     def construct_requests(self, doc, ctx):
         """Uses RequestFactory to construct Requests and returns an iterable of
@@ -94,12 +95,19 @@ class CnnDMParaphraseTask(Task):
             The results of the requests created in construct_requests.
         """
         continuation = results
-
-        # no_answer_probability = exp(logprob_unanswerable)
-
         prediction = continuation
+        # no_answer_probability = exp(logprob_unanswerable)
+        # if cont_type == list:
+        #     prediction = continuation[0]
+        # elif cont_type == str:
+        #     prediction = continuation
+        # else:
+        #     raise ValueError(f" LM response {continuation} has unsupported type {cont_type}!")
 
-        original = doc["original_span"]
+        # print(f"Predictions: {prediction}")
+
+        original = [doc["original_span"]]
+        # print(f"Original Span: {original}")
 
         parascore = self.para_scorer.free_score(cands=prediction, sources=original, batch_size=16)[0].item()
         print(f"Score:{parascore}")
