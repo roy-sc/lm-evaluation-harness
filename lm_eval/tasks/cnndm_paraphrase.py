@@ -10,7 +10,7 @@ from lm_eval.metrics import mean
 class CnnDMParaphraseTask(Task):
     VERSION = 0
     # dataset as denoted in HuggingFace `datasets`.
-    DATASET_PATH = "mtc/cnn_dm_paraphrase_full"
+    DATASET_PATH = "mtc/cnn_dm_paraphrase"
     # `DATASET_PATH`. If there aren't specific subsets you need, leave this as `None`.
     DATASET_NAME = None
 
@@ -62,6 +62,8 @@ class CnnDMParaphraseTask(Task):
                 "Rephrase the following sentence:"
                 + "\n"
                 + doc["original_span"]
+                + "\n"
+                + "Paraphrase:"
         )
 
     def doc_to_target(self, doc):
