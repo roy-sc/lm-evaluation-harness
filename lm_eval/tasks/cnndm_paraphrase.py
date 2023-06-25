@@ -14,7 +14,7 @@ class CnnDMParaphraseTask(Task):
     # `DATASET_PATH`. If there aren't specific subsets you need, leave this as `None`.
     DATASET_NAME = None
 
-    para_scorer = ParaScorer(lang="en", model_type='bert-base-uncased', device='cuda')
+    para_scorer = ParaScorer(lang="en", model_type='bert-base-uncased', device='cuda:0')
 
     def has_training_docs(self):
         return False
@@ -94,20 +94,9 @@ class CnnDMParaphraseTask(Task):
         :param results:
             The results of the requests created in construct_requests.
         """
-        continuation = results
-        prediction = continuation
-        # no_answer_probability = exp(logprob_unanswerable)
-        # if cont_type == list:
-        #     prediction = continuation[0]
-        # elif cont_type == str:
-        #     prediction = continuation
-        # else:
-        #     raise ValueError(f" LM response {continuation} has unsupported type {cont_type}!")
-
-        # print(f"Predictions: {prediction}")
+        prediction = results
 
         original = [doc["original_span"]]
-        # print(f"Original Span: {original}")
 
         parascore = self.para_scorer.free_score(cands=prediction, sources=original, batch_size=16)[0].item()
         print(f"Score:{parascore}")
