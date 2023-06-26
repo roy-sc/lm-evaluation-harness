@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import List, Mapping, NewType, Optional, Tuple, Union
 from tqdm import tqdm
 
-from transformers import BatchEncoding
+from transformers import BatchEncoding, GenerationConfig
 from accelerate import find_executable_batch_size
 
 from lm_eval import utils
@@ -523,6 +523,10 @@ class AutoCausalLM(HuggingFaceAutoLM):
             self.tokenizer, stop, input_ids.shape[1], input_ids.shape[0]
         )
 
+        generation_config = GenerationConfig(
+            temperature=self.temperature
+        )
+
         generations = self.model.generate(
             input_ids=input_ids,
             attention_mask=attention_mask,
@@ -532,7 +536,7 @@ class AutoCausalLM(HuggingFaceAutoLM):
             max_new_tokens=max_tokens,
             stopping_criteria=stopping_criteria,
             do_sample=False,
-            temperature=self.temperature
+            generation_config=generation_config
         )
         return utils.select_continuation_from_batch_left_padding(
             generations, max_context_size=inputs["input_ids"].size(1)
@@ -697,13 +701,17 @@ class AutoSeq2SeqLM(HuggingFaceAutoLM):
             self.tokenizer, stop, 1, input_ids.shape[0]
         )
 
+        generation_config = GenerationConfig(
+            temperature=self.temperature
+        )
+
         generations = self.model.generate(
             input_ids=input_ids,
             attention_mask=attention_mask,
             max_new_tokens=max_tokens,
             stopping_criteria=stopping_criteria,
             do_sample=False,
-            temperature=self.temperature
+            generation_config=generation_config
         )
         return generations
 
