@@ -157,7 +157,8 @@ def main():
         for task_name, task_output in write_out_info.items():
             df = pd.DataFrame.from_dict(task_output)
             task_table = wandb.Table(dataframe=df)
-            wandb.log({task_name: task_table})
+            table_name = task_name + "_output_table"
+            wandb.log({table_name: task_table})
         print(evaluator.make_table(results))
 
 
