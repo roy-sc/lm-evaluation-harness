@@ -89,6 +89,7 @@ class HuggingFaceAutoLM(BaseLM):
         load_in_8bit: Optional[bool] = False,
         trust_remote_code: Optional[bool] = False,
         gptq_use_triton: Optional[bool] = False,
+        temperature: float = 1.0
     ):
         """Initializes a HuggingFace `AutoModel` and `AutoTokenizer` for evaluation.
         Args:
@@ -147,6 +148,8 @@ class HuggingFaceAutoLM(BaseLM):
                 If True, will trust the remote code when loading the model.
             gptq_use_triton (bool, optional, defaults to False):
                 Use Triton for GPTQ inference.
+            temperature (float, defaults to 1.0):
+                Temperature for generation configuration.
         """
         super().__init__()
 
@@ -229,6 +232,7 @@ class HuggingFaceAutoLM(BaseLM):
             self._device = self.model.hf_device_map["lm_head"]
         if not use_accelerate:
             self.model.to(self._device)
+        self.temperature = temperature
 
     def _create_auto_model(
         self,
@@ -528,6 +532,7 @@ class AutoCausalLM(HuggingFaceAutoLM):
             max_new_tokens=max_tokens,
             stopping_criteria=stopping_criteria,
             do_sample=False,
+            temperature=self.temperature
         )
         return utils.select_continuation_from_batch_left_padding(
             generations, max_context_size=inputs["input_ids"].size(1)
@@ -698,6 +703,7 @@ class AutoSeq2SeqLM(HuggingFaceAutoLM):
             max_new_tokens=max_tokens,
             stopping_criteria=stopping_criteria,
             do_sample=False,
+            temperature=self.temperature
         )
         return generations
 
