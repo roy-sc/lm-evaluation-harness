@@ -524,18 +524,17 @@ class AutoCausalLM(HuggingFaceAutoLM):
         )
 
         generation_config = GenerationConfig(
-            temperature=self.temperature
+            temperature=self.temperature,
+            max_new_tokens=max_tokens,
+            do_sample=False
         )
 
         generations = self.model.generate(
             input_ids=input_ids,
             attention_mask=attention_mask,
-            # GPT style models require the `generate` `max_length` arg to include the
-            # context length, so we instead set `max_new_tokens` which is the number
-            # of new tokens to generate, excluding the current number of tokens.
-            max_new_tokens=max_tokens,
+            # max_new_tokens=max_tokens,
             stopping_criteria=stopping_criteria,
-            do_sample=False,
+            # do_sample=False,
             generation_config=generation_config
         )
         return utils.select_continuation_from_batch_left_padding(
@@ -702,15 +701,17 @@ class AutoSeq2SeqLM(HuggingFaceAutoLM):
         )
 
         generation_config = GenerationConfig(
-            temperature=self.temperature
+            temperature=self.temperature,
+            max_new_tokens=max_tokens,
+            do_sample=False
         )
 
         generations = self.model.generate(
             input_ids=input_ids,
             attention_mask=attention_mask,
-            max_new_tokens=max_tokens,
+            #max_new_tokens=max_tokens,
             stopping_criteria=stopping_criteria,
-            do_sample=False,
+            #do_sample=False,
             generation_config=generation_config
         )
         return generations
