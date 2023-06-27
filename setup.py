@@ -44,7 +44,8 @@ setuptools.setup(
         "randomname",
         "wandb",
         "einops",
-        "parascore"
+        "parascore",
+        "mutual-implication-score"
     ],
     extras_require={
         "dev": ["black", "flake8", "pre-commit", "pytest", "pytest-cov"],

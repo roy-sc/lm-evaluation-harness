@@ -1,6 +1,8 @@
 """
 The Task is based on the CnnDM Dataset modified for paraphrasing
 """
+from mutual_implication_score import MIS
+
 from lm_eval.base import Task, rf
 from parascore import ParaScorer
 
@@ -15,6 +17,7 @@ class CnnDMParaphraseTask(Task):
     DATASET_NAME = None
 
     para_scorer = ParaScorer(lang="en", model_type='bert-base-uncased', device='cuda:0')
+    mutual_implication_scorer = MIS(device='cuda:0')
 
     def has_training_docs(self):
         return False
@@ -59,11 +62,10 @@ class CnnDMParaphraseTask(Task):
 
     def doc_to_text(self, doc):
         return (
-                "Rephrase the following sentence:"
-                + "\n"
-                + doc["original_span"]
-                + "\n"
-                + "Paraphrase:"
+            f"""Please paraphrase the following sentence. Ensure that the meaning of the sentence remains the same, but the words and structure are different. Your response should only contain the paraphrased sentence and nothing else.
+Input: {doc['original_span']}
+Output:
+"""
         )
 
     def doc_to_target(self, doc):
@@ -101,9 +103,13 @@ class CnnDMParaphraseTask(Task):
         original = [doc["original_span"]]
 
         parascore = self.para_scorer.free_score(cands=prediction, sources=original, batch_size=16)[0].item()
-        print(f"Score:{parascore}")
+
+        mutual_implication_score = self.mutual_implication_scorer.compute(source_texts=original,paraphrases=prediction)[0]
+        print(f"Para Score:{parascore}")
+        print(f"MIS Score:{mutual_implication_score}")
         return {
-            "parascore": parascore
+            "parascore": parascore,
+            "mutual_information_score": mutual_implication_score
         }
 
     def aggregation(self):
@@ -113,7 +119,8 @@ class CnnDMParaphraseTask(Task):
             functions that aggregate a list of metric scores
         """
         return {
-            "parascore": mean
+            "parascore": mean,
+            "mutual_information_score": mean
         }
 
     def higher_is_better(self):
@@ -123,5 +130,6 @@ class CnnDMParaphraseTask(Task):
                     whether a higher value of the submetric is better
                 """
         return {
-            "parascore": True
+            "parascore": True,
+            "mutual_information_score": True
         }
