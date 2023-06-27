@@ -523,19 +523,20 @@ class AutoCausalLM(HuggingFaceAutoLM):
             self.tokenizer, stop, input_ids.shape[1], input_ids.shape[0]
         )
 
-        generation_config = GenerationConfig(
-            temperature=self.temperature,
-            max_new_tokens=max_tokens,
-            do_sample=False
-        )
+        # generation_config = GenerationConfig(
+        #     temperature=self.temperature,
+        #     max_new_tokens=max_tokens,
+        #     do_sample=False,
+        #     pad_token_id=self.eot_token_id
+        # )
 
         generations = self.model.generate(
             input_ids=input_ids,
             attention_mask=attention_mask,
-            # max_new_tokens=max_tokens,
+            max_new_tokens=max_tokens,
             stopping_criteria=stopping_criteria,
-            # do_sample=False,
-            generation_config=generation_config
+            do_sample=False,
+            #generation_config=generation_config
         )
         return utils.select_continuation_from_batch_left_padding(
             generations, max_context_size=inputs["input_ids"].size(1)
@@ -700,19 +701,20 @@ class AutoSeq2SeqLM(HuggingFaceAutoLM):
             self.tokenizer, stop, 1, input_ids.shape[0]
         )
 
-        generation_config = GenerationConfig(
-            temperature=self.temperature,
-            max_new_tokens=max_tokens,
-            do_sample=False
-        )
+        # generation_config = GenerationConfig(
+        #     temperature=self.temperature,
+        #     max_new_tokens=max_tokens,
+        #     do_sample=False,
+        #     pad_token_id=self.eot_token_id
+        # )
 
         generations = self.model.generate(
             input_ids=input_ids,
             attention_mask=attention_mask,
-            #max_new_tokens=max_tokens,
+            max_new_tokens=max_tokens,
             stopping_criteria=stopping_criteria,
-            #do_sample=False,
-            generation_config=generation_config
+            do_sample=False,
+            #generation_config=generation_config
         )
         return generations
 
