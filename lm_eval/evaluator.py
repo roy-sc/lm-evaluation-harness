@@ -7,24 +7,26 @@ import lm_eval.models
 import lm_eval.tasks
 import lm_eval.base
 from lm_eval.utils import positional_deprecated, run_task_tests
+import json
+import pathlib
 
 
 @positional_deprecated
 def simple_evaluate(
-    model,
-    model_args=None,
-    tasks=[],
-    num_fewshot=0,
-    batch_size=None,
-    device=None,
-    no_cache=False,
-    limit=None,
-    bootstrap_iters=100000,
-    description_dict=None,
-    check_integrity=False,
-    decontamination_ngrams_path=None,
-    write_out=False,
-    output_base_path=None,
+        model,
+        model_args=None,
+        tasks=[],
+        num_fewshot=0,
+        batch_size=None,
+        device=None,
+        no_cache=False,
+        limit=None,
+        bootstrap_iters=100000,
+        description_dict=None,
+        check_integrity=False,
+        decontamination_ngrams_path=None,
+        write_out=False,
+        output_base_path=None,
 ):
     """Instantiate and evaluate a model on a list of tasks.
 
@@ -121,16 +123,16 @@ decontaminate_suffix = "_decontaminate"
 
 @positional_deprecated
 def evaluate(
-    lm,
-    task_dict,
-    provide_description=None,
-    num_fewshot=0,
-    limit=None,
-    bootstrap_iters=100000,
-    description_dict=None,
-    decontamination_ngrams_path=None,
-    write_out=False,
-    output_base_path=None,
+        lm,
+        task_dict,
+        provide_description=None,
+        num_fewshot=0,
+        limit=None,
+        bootstrap_iters=100000,
+        description_dict=None,
+        decontamination_ngrams_path=None,
+        write_out=False,
+        output_base_path=None,
 ):
     """Instantiate and evaluate a model on a list of tasks.
 
@@ -347,30 +349,34 @@ def evaluate(
         if stderr is not None:
             results[task_name][metric + "_stderr"] = stderr(items)
 
-    if write_out:
-        import json
-        import pathlib
-
-        output_base_path = (
-            pathlib.Path(output_base_path)
-            if output_base_path is not None
-            else pathlib.Path(".")
-        )
-        try:
-            output_base_path.mkdir(parents=True, exist_ok=False)
-        except FileExistsError:
-            pass
-
-        for task_name, _ in task_dict_items:
-            with open(
-                output_base_path.joinpath(f"{task_name}_write_out_info.json"),
-                "w",
-                encoding="utf8",
-            ) as fp:
-                json.dump(write_out_info[task_name], fp, indent=4, ensure_ascii=False)
-    if not write_out:#todo: Change dependency that write_out has to be true for wandb to save data correctly
+    if write_out:  # todo: Change dependency that write_out has to be true for wandb to save data correctly
+        write_out_to_json(output_base_path, task_dict_items, write_out_info)
+    else:
         write_out_info = None
     return {"results": dict(results), "versions": dict(versions), "write_out_info": write_out_info}
+
+
+def write_out_to_json(output_base_path, task_dict_items, write_out_info, step=None):
+
+    output_base_path = (
+        pathlib.Path(output_base_path)
+        if output_base_path is not None
+        else pathlib.Path(".")
+    )
+    try:
+        output_base_path.mkdir(parents=True, exist_ok=False)
+    except FileExistsError:
+        pass
+
+    if not step:
+        step = ""
+    for task_name, _ in task_dict_items:
+        with open(
+                output_base_path.joinpath(f"{task_name}_write_out_info_{step}.json"),
+                "w",
+                encoding="utf8",
+        ) as fp:
+            json.dump(write_out_info[task_name], fp, indent=4, ensure_ascii=False)
 
 
 def make_table(result_dict):
