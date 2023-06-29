@@ -12,7 +12,7 @@ from lm_eval.metrics import mean
 class CnnDMParaphraseTask(Task):
     VERSION = 0
     # dataset as denoted in HuggingFace `datasets`.
-    DATASET_PATH = "mtc/cnn_dm_paraphrase"
+    DATASET_PATH = "mtc/cnn_dm_paraphrase_10k"
     # `DATASET_PATH`. If there aren't specific subsets you need, leave this as `None`.
     DATASET_NAME = None
 
@@ -61,12 +61,11 @@ class CnnDMParaphraseTask(Task):
             return self.dataset["train"]
 
     def doc_to_text(self, doc):
-        return (
-            f"""Please paraphrase the following sentence. Ensure that the meaning of the sentence remains the same, but the words and structure are different. Your response should only contain the paraphrased sentence and nothing else.
+        return (f"""Please paraphrase the following sentence. Ensure that the meaning of the sentence remains the same, but the words and structure are different. Your response should only contain the paraphrased sentence without any additional information.
 Input: {doc['original_span']}
 Output:
 """
-        )
+                )
 
     def doc_to_target(self, doc):
         return doc["original_span"]
@@ -104,7 +103,8 @@ Output:
 
         parascore = self.para_scorer.free_score(cands=prediction, sources=original, batch_size=16)[0].item()
 
-        mutual_implication_score = self.mutual_implication_scorer.compute(source_texts=original,paraphrases=prediction)[0]
+        mutual_implication_score = \
+        self.mutual_implication_scorer.compute(source_texts=original, paraphrases=prediction)[0]
         print(f"Para Score:{parascore}")
         print(f"MIS Score:{mutual_implication_score}")
         return {
