@@ -356,7 +356,7 @@ def evaluate(
     return {"results": dict(results), "versions": dict(versions), "write_out_info": write_out_info}
 
 
-def write_out_to_json(output_base_path, task_dict_items, write_out_info, step=None):
+def write_out_to_json(output_base_path, task_dict_items, write_out_info):
 
     output_base_path = (
         pathlib.Path(output_base_path)
@@ -368,11 +368,9 @@ def write_out_to_json(output_base_path, task_dict_items, write_out_info, step=No
     except FileExistsError:
         pass
 
-    if not step:
-        step = ""
     for task_name, _ in task_dict_items:
         with open(
-                output_base_path.joinpath(f"{task_name}_write_out_info_{step}.json"),
+                output_base_path.joinpath(f"{task_name}_write_out_info.json"),
                 "w",
                 encoding="utf8",
         ) as fp:
