@@ -64,6 +64,7 @@ from . import germanquad
 from . import germeval2017
 from . import x_stance
 from . import cnndm_paraphrase
+from . import factcc_hallucination_classification
 
 ########################################
 # Translation tasks
@@ -322,6 +323,7 @@ TASK_REGISTRY = {
     "germeval2017": germeval2017.GermEval2017,
     "x_stance_de": x_stance.XStanceDE,
     "cnn_dm_paraphrase": cnndm_paraphrase.CnnDMParaphraseTask,
+    "factcc_hallucination_classification": factcc_hallucination_classification.FactCCHallucinationClassificationTask,
     # Requires manual download of data.
     # "storycloze_2016": storycloze.StoryCloze2016,
     # "storycloze_2018": storycloze.StoryCloze2018,
