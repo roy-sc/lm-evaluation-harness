@@ -1,5 +1,7 @@
 from functools import partial
 
+import numpy as np
+
 from lm_eval.base import Task, rf
 from sklearn.metrics import f1_score, balanced_accuracy_score, precision_score, recall_score
 
@@ -83,12 +85,24 @@ Label:
         return " " + doc['label']
 
     def construct_requests(self, doc, ctx):
-        continuation = rf.greedy_until(ctx, {"until": ["\n"]})
-        return continuation
+        # continuation = rf.greedy_until(ctx, {"until": ["\n"]})
+        ll_false, _ = rf.loglikelihood(ctx, " INCORRECT")
+        ll_true, _ = rf.loglikelihood(ctx, " CORRECT")
+        return ll_false, ll_true
+
+    @staticmethod
+    def convert_label(label):
+        if label.lower() == 'incorrect':
+            return 0
+        elif label.lower() == 'correct':
+            return 1
+        else:
+            raise ValueError("Invalid label!")
 
     def process_results(self, doc, results):
-        prediction = results
-        truth = doc["label"]
+        prediction = np.argmax(results)
+        truth = self.convert_label(doc["label"])
+        print(f"Results: {results}, Prediction {prediction}, Truth: {truth}")
         return {"bacc": (prediction, truth),
                 "f1": (prediction, truth),
                 "precision": (prediction, truth),
