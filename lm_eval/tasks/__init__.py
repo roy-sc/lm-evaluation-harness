@@ -66,6 +66,7 @@ from . import x_stance
 from . import cnndm_paraphrase
 from . import factcc_hallucination_classification
 from . import frank_hallucination_classification
+from . import xsum_faith_hallucination_classification
 
 ########################################
 # Translation tasks
@@ -326,6 +327,7 @@ TASK_REGISTRY = {
     "cnn_dm_paraphrase": cnndm_paraphrase.CnnDMParaphraseTask,
     "factcc_hallucination_classification": factcc_hallucination_classification.FactCCHallucinationClassificationTask,
     "frank_hallucination_classification": frank_hallucination_classification.FrankHallucinationClassificationTask,
+    "xsum_faith_hallucination_classification": xsum_faith_hallucination_classification.XsumFaithHallucinationClassificationTask,
     # Requires manual download of data.
     # "storycloze_2016": storycloze.StoryCloze2016,
     # "storycloze_2018": storycloze.StoryCloze2018,
