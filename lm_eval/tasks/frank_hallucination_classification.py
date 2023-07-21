@@ -82,22 +82,16 @@ Label:
 """)
 
     def doc_to_target(self, doc):
-        return " " + doc['Factual']
+        return " " + str(doc['Factual'])
 
     def construct_requests(self, doc, ctx):
-        # continuation = rf.greedy_until(ctx, {"until": ["\n"]})
         ll_false, _ = rf.loglikelihood(ctx, " False")
         ll_true, _ = rf.loglikelihood(ctx, " True")
         return ll_false, ll_true
 
     @staticmethod
-    def convert_label(label):
-        if label.lower() == 'false':
-            return 0
-        elif label.lower() == 'true':
-            return 1
-        else:
-            raise ValueError("Invalid label!")
+    def convert_label(label: bool):
+        return int(label)
 
     def process_results(self, doc, results):
         prediction = np.argmax(results)
