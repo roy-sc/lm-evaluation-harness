@@ -67,6 +67,7 @@ from . import cnndm_paraphrase
 from . import factcc_hallucination_classification
 from . import frank_hallucination_classification
 from . import xsum_faith_hallucination_classification
+from . import newsum2021_summarization
 
 ########################################
 # Translation tasks
@@ -328,6 +329,7 @@ TASK_REGISTRY = {
     "factcc_hallucination_classification": factcc_hallucination_classification.FactCCHallucinationClassificationTask,
     "frank_hallucination_classification": frank_hallucination_classification.FrankHallucinationClassificationTask,
     "xsum_faith_hallucination_classification": xsum_faith_hallucination_classification.XsumFaithHallucinationClassificationTask,
+    "newsum2021_summarization": newsum2021_summarization.Newsum2021SummarizationTask,
     # Requires manual download of data.
     # "storycloze_2016": storycloze.StoryCloze2016,
     # "storycloze_2018": storycloze.StoryCloze2018,
