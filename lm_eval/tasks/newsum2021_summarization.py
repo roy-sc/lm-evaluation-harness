@@ -32,7 +32,7 @@ def _rouge_agg(key, items):
 class Newsum2021SummarizationTask(Task):
     VERSION = 0
     # dataset as denoted in HuggingFace `datasets`.
-    DATASET_PATH = "mtc/newsum2021"
+    DATASET_PATH = "mtc/newsum2021_filtered_200_samples_between_100_600_words_per_article"
     # `DATASET_PATH`. If there aren't specific subsets you need, leave this as `None`.
     DATASET_NAME = None
     LANGUAGE = "german"
@@ -64,7 +64,7 @@ class Newsum2021SummarizationTask(Task):
             return self.dataset["test"]
 
     def doc_to_text(self, doc):
-        return (f"""Please generate a summary in German for the following article. The summary should be fewer than 3 sentences.
+        return (f"""Generate a summary in German for the following article. The summary should be fewer than 3 sentences.
 Article: {doc['article']}
 Summary:
 """
