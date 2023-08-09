@@ -30,7 +30,9 @@ CONFIG_FILE=$(python3 utils/euler_config_parser.py \
 
 scp "$1" euler:$CODE_PATH/euler_scripts
 #scp utils/bash_euler_commands_helper.py euler:$CODE_PATH/euler_scripts/utils/bash_euler_commands_helper.py
-#scp ../flan_t5_peft_lora_finetuning.py euler:$CODE_PATH/flan_t5_peft_lora_finetuning.py
+scp ../lm_eval/tasks/xsum_faith_hallucination_classification.py euler:$CODE_PATH/lm_eval/tasks/xsum_faith_hallucination_classification.py
+#scp ../lm_eval/models/huggingface.py euler:$CODE_PATH/lm_eval/models/huggingface.py
+#scp ../main.py euler:$CODE_PATH/main.py
 scp ../"$CONFIG_FILE" euler:$CODE_PATH/$CONFIG_FILE
 
 if [ -z "$2" ]
@@ -91,7 +93,7 @@ ssh euler ARG1=\"$1\" \
     echo "### Running command..."
     CMD="$STR_COMMAND $ARG8 \""
     echo "$CMD"
-    #eval "$CMD"
+    eval "$CMD"
     echo ""
     sleep 1
 

@@ -1,9 +1,16 @@
 python -m scripts.write_out \
-    --output_base_path "germanquad_results" \
-    --tasks "germanquad_open_qa" \
+    --output_base_path "pawsx_results" \
+    --tasks "pawsx_de" \
     --sets "train, test" \
     --num_fewshot 1 \
     --num_examples 1
+
+    python -m scripts.write_out \
+        --output_base_path "newsum2021_summarization_results" \
+        --tasks "newsum2021_summarization" \
+        --sets "test" \
+        --num_fewshot 0 \
+        --num_examples 2
 
 python main.py \
         --model hf-seq2seq \
