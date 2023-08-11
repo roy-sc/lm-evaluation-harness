@@ -264,7 +264,7 @@ class BaseLM(LM):
             _, context_enc, continuation_enc = re_ord.get_reordered()[0]
             max_context = len((context_enc + continuation_enc)[-(self.max_length + 1) :][:-1])
             if (self.batch_size == 'auto'):
-                
+
                 if override_bs is None:
                     print('Passed argument batch_size = auto. Detecting largest batch size')
                     @find_executable_batch_size(starting_batch_size=512) # if OOM, then halves batch_size and tries again
@@ -442,7 +442,7 @@ class Task(abc.ABC):
     # The name of a subset within `DATASET_PATH`.
     DATASET_NAME: str = None
 
-    def __init__(self, data_dir=None, cache_dir=None, download_mode=None):
+    def __init__(self, data_dir=None, cache_dir=None, download_mode=None, prompt_template: str = None):
         """
         :param data_dir: str
             Stores the path to a local folder containing the `Task`'s data files.
@@ -468,6 +468,7 @@ class Task(abc.ABC):
         self.download(data_dir, cache_dir, download_mode)
         self._training_docs = None
         self._fewshot_docs = None
+        self.prompt_template = prompt_template
 
     def download(self, data_dir=None, cache_dir=None, download_mode=None):
         """Downloads and returns the task dataset.

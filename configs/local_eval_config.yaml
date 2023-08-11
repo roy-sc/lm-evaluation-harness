@@ -1,12 +1,13 @@
-model: hf-causal-experimental #hf-seq2seq #hf-causal-experimental
+model: hf-seq2seq #hf-seq2seq #hf-causal-experimental
 #tiiuae-falcon-7b tiiuae/falcon-40b-instruct google/flan-ul2 psmathur/orca_mini_13b mosaicml/mpt-30b-instruct h2oai/h2ogpt-gm-oasst1-en-2048-falcon-40b-v2
-model_args: "pretrained=stabilityai/StableBeluga-7B,trust_remote_code=True,use_accelerate=True" #load_in_8bit=True,temperature=0.2,do_sample=True"
+model_args: "pretrained=google/flan-t5-base,trust_remote_code=True,use_accelerate=True" #load_in_8bit=True,temperature=0.2,do_sample=True"
 tasks: "newsum2021_summarization" #"germanquad_open_qa,x_stance_de,pawsx_de"
+prompt_version_per_task: "1"
 num_fewshot: 0
 batch_size: "1"
 device: null
 output_path: null
-limit: null
+limit: 1
 data_sampling: null
 no_cache: true
 decontamination_ngrams_path: null
@@ -14,4 +15,4 @@ description_dict_path: null
 check_integrity: false
 write_out: true
 output_base_path: "results"
-wandb_on: true
+wandb_on: false

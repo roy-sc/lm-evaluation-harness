@@ -14,8 +14,10 @@ import pathlib
 @positional_deprecated
 def simple_evaluate(
         model,
+        model_id=None,
         model_args=None,
         tasks=[],
+        prompt_version_per_task: str = None,
         num_fewshot=0,
         batch_size=None,
         device=None,
@@ -32,11 +34,15 @@ def simple_evaluate(
 
     :param model: Union[str, LM]
         Name of model or LM object, see lm_eval.models.get_model
+    :param model_id: str
+        Name of the model id (usually Huggingface model id)
     :param model_args: Optional[str]
         String arguments for each model class, see LM.create_from_arg_string.
         Ignored if `model` argument is a LM object.
     :param tasks: list[Union[str, Task]]
         List of task names or Task objects. Task objects will be taken to have name task.EVAL_HARNESS_NAME if defined and type(task).__name__ otherwise.
+    :param prompt_version_per_task: Dict
+        A comma seperated integer indicating the version of prompt to select for a given task and model.
     :param num_fewshot: int
         Number of examples in few-shot context
     :param batch_size: int, optional
@@ -85,7 +91,7 @@ def simple_evaluate(
             + ".db",
         )
 
-    task_dict = lm_eval.tasks.get_task_dict(tasks)
+    task_dict = lm_eval.tasks.get_task_dict(tasks, model_id=model_id, prompt_version_per_task=prompt_version_per_task)
 
     if check_integrity:
         run_task_tests(task_list=tasks)

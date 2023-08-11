@@ -42,6 +42,7 @@ def parse_args():
     parser.add_argument("--model", required=True)
     parser.add_argument("--model_args", default="")
     parser.add_argument("--tasks", default=None, choices=MultiChoice(tasks.ALL_TASKS))
+    parser.add_argument("--prompt_version_per_task", type=str, default=None)
     parser.add_argument("--provide_description", action="store_true")
     parser.add_argument("--num_fewshot", type=int, default=0)
     parser.add_argument("--batch_size", type=str, default=None)
@@ -124,8 +125,10 @@ def main():
 
     results = evaluator.simple_evaluate(
         model=args.model,
+        model_id=model_args_dict["pretrained"],
         model_args=args.model_args,
         tasks=task_names,
+        prompt_version_per_task=args.prompt_version_per_task,
         num_fewshot=args.num_fewshot,
         batch_size=args.batch_size,
         device=args.device,

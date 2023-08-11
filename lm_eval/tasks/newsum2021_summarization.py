@@ -38,6 +38,10 @@ class Newsum2021SummarizationTask(Task):
     DATASET_NAME = None
     LANGUAGE = "german"
 
+    default_prompt_template = (
+        f"Generate a summary in German for the following article. The summary should be around 2 to 3 "
+        f"sentences.\nArticle: {{article}}\n\nSummary:\n")
+
     def has_training_docs(self):
         return True
 
@@ -65,17 +69,10 @@ class Newsum2021SummarizationTask(Task):
             return self.dataset["test"]
 
     def doc_to_text(self, doc):
-        system_prompt = "### System:\nYou are StableBeluga, an AI that follows instructions extremely well. Help as much as you can. Reply only German.\n\n"
-
-
-        prompt1 = "Generate a summary in German for the following article. The summary should be around 2 to 3 sentences."
-        prompt2 = "Bitte fasse den gegebenen Artikel in maximal 3 Sätzen zusammen:"
-        prompt = f"{system_prompt}### User: {prompt1}\n Article: {doc['article']}\n\n### Assistant:\n"
-#         return (f"""{prompt}.
-# Article: {doc['article']}
-# Summary:
-# """
-#                 )
+        if self.prompt_template:
+            prompt = self.prompt_template.format(article=doc['article'])
+        else:
+            prompt = self.default_prompt_template.format(article=doc['article'])
         return prompt
 
     def doc_to_target(self, doc):

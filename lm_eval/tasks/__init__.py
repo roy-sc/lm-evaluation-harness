@@ -1,8 +1,10 @@
+import os
 from pprint import pprint
-from typing import List, Union
+from typing import List, Union, Dict
 
 import sacrebleu
 import lm_eval.base
+import json
 
 from . import superglue
 from . import glue
@@ -79,7 +81,6 @@ gpt3_translation_benchmarks = {
     "wmt16": ["en-ro", "ro-en", "de-en", "en-de"],  # German, Romanian
 }
 
-
 # 28 total
 selected_translation_benchmarks = {
     **gpt3_translation_benchmarks,
@@ -92,7 +93,6 @@ all_translation_benchmarks = {
     ts: sacrebleu.get_langpairs_for_testset(ts)
     for ts in sacrebleu.get_available_testsets()
 }
-
 
 ########################################
 # All tasks
@@ -343,7 +343,6 @@ TASK_REGISTRY = {
     **mgsm.construct_tasks(),
 }
 
-
 ALL_TASKS = sorted(list(TASK_REGISTRY))
 
 _EXAMPLE_JSON_PATH = "split:key:/absolute/path/to/data.json"
@@ -402,16 +401,59 @@ def get_task_name_from_object(task_object):
     )
 
 
-def get_task_dict(task_name_list: List[Union[str, lm_eval.base.Task]]):
+def load_prompt(task_name, model_id, prompt_version):
+    """Load the appropriate prompt based on task name, model prefix, and version."""
+    file_path = os.path.join("configs", "prompt_templates", f"{task_name}.json")
+
+    if not os.path.exists(file_path):
+        return None
+
+    with open(file_path, 'r') as f:
+        all_prompts = json.load(f)
+
+    # Find the model name starting with the given prefix
+    matched_model_name = next((name for name in all_prompts.keys() if model_id.startswith(name)), None)
+
+    if not matched_model_name:
+        print(
+            f"Did not find a prompt for the model with id {model_id} and prompt version {prompt_version}. Using "
+            f"default prompt for task {task_name}")
+        return None
+    matched_prompt = all_prompts[matched_model_name].get(prompt_version, None)
+    if not matched_prompt:
+        print(
+            f"Did not find a prompt for the given prompt version {prompt_version}. Using default prompt for task {task_name}")
+        return None
+    return matched_prompt
+
+
+def get_task_dict(task_name_list: List[Union[str, lm_eval.base.Task]], model_id: str,
+                  prompt_version_per_task: str = None):
+    prompt_templates = {}
+
+    if prompt_version_per_task:
+        prompt_versions = prompt_version_per_task.split(",")
+        assert len(prompt_versions) == len(task_name_list), "Mismatch in number of tasks and provided prompt versions."
+
+        for task_name, prompt_version in zip(task_name_list, prompt_versions):
+            prompt = load_prompt(task_name, model_id, prompt_version)
+            if prompt:
+                prompt_templates[task_name] = prompt
+                print(f"Selected prompt version: {prompt_version} for task {task_name}.\nFinal prompt: {prompt}")
+
     task_name_dict = {
-        task_name: get_task(task_name)()
+        task_name: get_task(task_name)(prompt_template=prompt_templates.get(task_name, None))
         for task_name in task_name_list
         if isinstance(task_name, str)
     }
+
     task_name_from_object_dict = {
         get_task_name_from_object(task_object): task_object
         for task_object in task_name_list
         if not isinstance(task_object, str)
     }
-    assert set(task_name_dict.keys()).isdisjoint(set(task_name_from_object_dict.keys()))
+
+    assert set(task_name_dict.keys()).isdisjoint(set(task_name_from_object_dict.keys())), \
+        "Task name collision between string and object tasks."
+
     return {**task_name_dict, **task_name_from_object_dict}
