@@ -4,7 +4,7 @@ from typing import Dict
 import pandas as pd
 from tqdm import tqdm
 
-from lm_eval.datasets.fragments import Fragments
+from lm_eval.fragments import Fragments
 
 
 def get_extractiveness_metrics(df: pd.DataFrame, language: str, article_key: str, summary_key: str) -> Dict:

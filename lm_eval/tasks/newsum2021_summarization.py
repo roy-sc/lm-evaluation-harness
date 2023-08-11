@@ -1,13 +1,12 @@
 """
 The Task is based on the newsum2021 Dataset for summarization
 """
-from functools import partial
-from typing import List
 
 import evaluate
 import nltk
 
 from lm_eval.base import Task, rf
+from lm_eval.fragments import Fragments
 from lm_eval.metrics import mean
 
 summarization_metric = evaluate.load("rouge")
@@ -116,11 +115,15 @@ class Newsum2021SummarizationTask(Task):
         assert len(results) == 1
 
         prediction, reference = self.postprocess_text(results[0], doc["highlights"])
+        article = doc["article"]
+        fragment = Fragments(article, prediction, language=self.LANGUAGE)
 
         return {
             "rouge1": _rouge_metric(prediction, reference, "rouge1"),
             "rouge2": _rouge_metric(prediction, reference, "rouge2"),
             "rougeL": _rouge_metric(prediction, reference, "rougeL"),
+            'coverage': fragment.coverage(),
+            'density': fragment.density()
         }
 
     def aggregation(self):
@@ -129,16 +132,12 @@ class Newsum2021SummarizationTask(Task):
             A dictionary where keys are the names of submetrics and values are
             functions that aggregate a list of metric scores
         """
-        # return {
-        #     "rouge1": partial(_rouge_agg, "rouge1"),
-        #     "rouge2": partial(_rouge_agg, "rouge2"),
-        #     "rougeL": partial(_rouge_agg, "rougeL"),
-        # }
-
         return {
             "rouge1": mean,
             "rouge2": mean,
             "rougeL": mean,
+            'coverage': mean,
+            'density': mean
         }
 
     def higher_is_better(self):
@@ -147,4 +146,4 @@ class Newsum2021SummarizationTask(Task):
                     A dictionary where keys are the names of submetrics and values are
                     whether a higher value of the submetric is better
                 """
-        return {"rouge1": True, "rouge2": True, "rougeL": True}
+        return {"rouge1": True, "rouge2": True, "rougeL": True, "coverage": False, "density": False}
