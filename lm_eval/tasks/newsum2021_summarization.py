@@ -2,20 +2,21 @@
 The Task is based on the newsum2021 Dataset for summarization
 """
 from functools import partial
+from typing import List
 
 import evaluate
 import nltk
 
 from lm_eval.base import Task, rf
+from lm_eval.metrics import mean
 
 summarization_metric = evaluate.load("rouge")
 
 
 def _rouge_metric(predictions, references, rouge_type=None):
     result = summarization_metric.compute(
-        predictions=predictions,
-        references=references,
-        rouge_types=[rouge_type],
+        predictions=[predictions],
+        references=[references],
         use_stemmer=True,
     )[rouge_type]
     return result
@@ -64,11 +65,18 @@ class Newsum2021SummarizationTask(Task):
             return self.dataset["test"]
 
     def doc_to_text(self, doc):
-        return (f"""Generate a summary in German for the following article. The summary should be fewer than 3 sentences.
-Article: {doc['article']}
-Summary:
-"""
-                )
+        system_prompt = "### System:\nYou are StableBeluga, an AI that follows instructions extremely well. Help as much as you can. Reply only German.\n\n"
+
+
+        prompt1 = "Generate a summary in German for the following article. The summary should be around 2 to 3 sentences."
+        prompt2 = "Bitte fasse den gegebenen Artikel in maximal 3 Sätzen zusammen:"
+        prompt = f"{system_prompt}### User: {prompt1}\n Article: {doc['article']}\n\n### Assistant:\n"
+#         return (f"""{prompt}.
+# Article: {doc['article']}
+# Summary:
+# """
+#                 )
+        return prompt
 
     def doc_to_target(self, doc):
         summary = doc["highlights"]
@@ -96,7 +104,6 @@ Summary:
         # rougeLSum expects newline after each sentence
         prediction = "\n".join(nltk.sent_tokenize(prediction, language=self.LANGUAGE))
         reference = "\n".join(nltk.sent_tokenize(reference, language=self.LANGUAGE))
-
         return prediction, reference
 
     def process_results(self, doc, results):
@@ -114,9 +121,9 @@ Summary:
         prediction, reference = self.postprocess_text(results[0], doc["highlights"])
 
         return {
-            "rouge1": (prediction, reference),
-            "rouge2": (prediction, reference),
-            "rougeL": (prediction, reference),
+            "rouge1": _rouge_metric(prediction, reference, "rouge1"),
+            "rouge2": _rouge_metric(prediction, reference, "rouge2"),
+            "rougeL": _rouge_metric(prediction, reference, "rougeL"),
         }
 
     def aggregation(self):
@@ -125,10 +132,16 @@ Summary:
             A dictionary where keys are the names of submetrics and values are
             functions that aggregate a list of metric scores
         """
+        # return {
+        #     "rouge1": partial(_rouge_agg, "rouge1"),
+        #     "rouge2": partial(_rouge_agg, "rouge2"),
+        #     "rougeL": partial(_rouge_agg, "rougeL"),
+        # }
+
         return {
-            "rouge1": partial(_rouge_agg, "rouge1"),
-            "rouge2": partial(_rouge_agg, "rouge2"),
-            "rougeL": partial(_rouge_agg, "rougeL"),
+            "rouge1": mean,
+            "rouge2": mean,
+            "rougeL": mean,
         }
 
     def higher_is_better(self):

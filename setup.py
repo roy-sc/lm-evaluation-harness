@@ -46,7 +46,10 @@ setuptools.setup(
         "einops",
         "parascore",
         "mutual-implication-score",
-        "evaluate"
+        "evaluate",
+        "accelerate",
+        "bitsandbytes",
+        "sentencepiece"
     ],
     extras_require={
         "dev": ["black", "flake8", "pre-commit", "pytest", "pytest-cov"],
