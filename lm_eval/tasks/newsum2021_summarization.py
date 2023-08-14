@@ -102,6 +102,9 @@ class Newsum2021SummarizationTask(Task):
         reference = "\n".join(nltk.sent_tokenize(reference, language=self.LANGUAGE))
         return prediction, reference
 
+    def round_to_3_decimals(self, value: float) -> float:
+        return round(value, 3)
+
     def process_results(self, doc, results):
         """Take a single document and the LM results and evaluates, returning a
         dict where keys are the names of submetrics and values are the values of
@@ -119,11 +122,11 @@ class Newsum2021SummarizationTask(Task):
         fragment = Fragments(article, prediction, language=self.LANGUAGE)
 
         return {
-            "rouge1": _rouge_metric(prediction, reference, "rouge1"),
-            "rouge2": _rouge_metric(prediction, reference, "rouge2"),
-            "rougeL": _rouge_metric(prediction, reference, "rougeL"),
-            'coverage': fragment.coverage(),
-            'density': fragment.density()
+            "rouge1": self.round_to_3_decimals(_rouge_metric(prediction, reference, "rouge1")),
+            "rouge2": self.round_to_3_decimals(_rouge_metric(prediction, reference, "rouge2")),
+            "rougeL": self.round_to_3_decimals(_rouge_metric(prediction, reference, "rougeL")),
+            'coverage': self.round_to_3_decimals(fragment.coverage()),
+            'density': self.round_to_3_decimals(fragment.density())
         }
 
     def aggregation(self):
