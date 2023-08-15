@@ -5,7 +5,11 @@ import numpy as np
 import sacrebleu
 import sklearn.metrics
 import random
-from sklearn.metrics import f1_score, balanced_accuracy_score, precision_score, recall_score
+
+from sklearn.metrics import balanced_accuracy_score, precision_score, recall_score
+
+
+# from sklearn.metrics import f1_score, balanced_accuracy_score, precision_score, recall_score
 
 
 def mean(arr):
@@ -265,7 +269,7 @@ def complex_metric(preds, labels, average="micro", metric="bacc"):
         case "bacc":
             return balanced_accuracy_score(y_true=labels, y_pred=preds)
         case "f1":
-            return f1_score(y_true=labels, y_pred=preds, average=average)
+            return sklearn.metrics.f1_score(y_true=labels, y_pred=preds, average=average)
         case "precision":
             return precision_score(y_true=labels, y_pred=preds, average=average)
         case "recall":

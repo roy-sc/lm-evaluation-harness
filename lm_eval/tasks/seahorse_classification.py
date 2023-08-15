@@ -13,6 +13,15 @@ class SeahorseClassificationTask(Task):
     # `DATASET_PATH`. If there aren't specific subsets you need, leave this as `None`.
     DATASET_NAME = None
 
+    worker_lang_to_language_dict = {
+        "en-US": "English",
+        "es-ES": "Spanish",
+        "ru": "Russian",
+        "vi": "Vietnamese",
+        "tr": "Turkish",
+        "de": "German"
+    }
+
     default_prompt_template = """### System:
 You are StableBeluga, an AI that follows instructions extremely well. Help as much as you can.
 
@@ -36,25 +45,23 @@ Summary: {summary}
         if self.has_training_docs():
 
             if self._training_docs is None:
-
                 self._training_docs = list(self.dataset["train"])
             return self._training_docs
 
     def validation_docs(self):
         if self.has_validation_docs():
-
             return self.dataset["validation"]
 
     def test_docs(self):
         if self.has_test_docs():
-
             return self.dataset["test"]
 
     def doc_to_text(self, doc):
         if not self.prompt_template:
             self.prompt_template = self.default_prompt_template
         prompt = self.prompt_template.format(article=doc['article'],
-                                             summary=doc['summary'], label="", lang=doc['worker_lang'])
+                                             summary=doc['summary'], label="",
+                                             lang=self.worker_lang_to_language_dict[doc['worker_lang']])
         return prompt
 
     def doc_to_target(self, doc):
