@@ -6,12 +6,22 @@ from lm_eval.base import Task, rf
 from lm_eval.metrics import complex_metric_agg
 
 
-class FactCCHallucinationClassificationTask(Task):
+class SeahorseClassificationTask(Task):
     VERSION = 0
     # dataset as denoted in HuggingFace `datasets`.
-    DATASET_PATH = "mtc/factcc_annotated_eval_data"
+    DATASET_PATH = "mtc/seahorse_dataset_with_articles"
     # `DATASET_PATH`. If there aren't specific subsets you need, leave this as `None`.
     DATASET_NAME = None
+
+    default_prompt_template = """### System:
+You are StableBeluga, an AI that follows instructions extremely well. Help as much as you can.
+
+### User: Given an article and its summary in {lang}, determine if all information in the summary is sourced from the article. Return True if it is, and False if not. 
+Article: {article}
+Summary: {summary}
+
+### Assistant:"
+"""
 
     def has_training_docs(self):
         return False
@@ -24,64 +34,51 @@ class FactCCHallucinationClassificationTask(Task):
 
     def training_docs(self):
         if self.has_training_docs():
-            # We cache training documents in `self._training_docs` for faster
-            # few-shot processing. If the data is too large to fit in memory,
-            # return the training data as a generator instead of a list.
+
             if self._training_docs is None:
-                # If you need to process the data, `map` over the documents with
-                # the custom processing function, `self._process_doc`. E.g.
-                # `map(self._process_doc, self.dataset["validation"])`
-                # In most case you can leave this as is unless the dataset split is
-                # named differently than the default `"train"`.
+
                 self._training_docs = list(self.dataset["train"])
             return self._training_docs
 
     def validation_docs(self):
         if self.has_validation_docs():
-            # If you need to process the data, `map` over the documents with the
-            # custom processing function, `self._process_doc`. E.g.
-            # `map(self._process_doc, self.dataset["validation"])`
-            # In most case you can leave this as is unless the dataset split is
-            # named differently than the default `"validation"`.
+
             return self.dataset["validation"]
 
     def test_docs(self):
         if self.has_test_docs():
-            # If you need to process the data, `map` over the documents with the
-            # custom processing function, `self._process_doc`. E.g.
-            # `map(self._process_doc, self.dataset["test"])`
-            # In most case you can leave this as is unless the dataset split is
-            # named differently than the default `"test"`.
+
             return self.dataset["test"]
 
     def doc_to_text(self, doc):
-        return (f"""Given an article and a corresponding claim, label the claim as CORRECT, if the claim only contains information present in the article. Otherwise, label the claim as INCORRECT:
-Article: {doc['text']}
-Claim: {doc['claim']}
-Label:
-""")
+        if not self.prompt_template:
+            self.prompt_template = self.default_prompt_template
+        prompt = self.prompt_template.format(article=doc['article'],
+                                             summary=doc['summary'], label="", lang=doc['worker_lang'])
+        return prompt
 
     def doc_to_target(self, doc):
-        return " " + doc['label']
+        label = str(doc["question4"] == "Yes")
+        return " " + label
 
     def construct_requests(self, doc, ctx):
-        # continuation = rf.greedy_until(ctx, {"until": ["\n"]})
-        ll_false, _ = rf.loglikelihood(ctx, " INCORRECT")
-        ll_true, _ = rf.loglikelihood(ctx, " CORRECT")
+        ll_false, _ = rf.loglikelihood(ctx, " False")
+        ll_true, _ = rf.loglikelihood(ctx, " True")
         return ll_false, ll_true
 
     @staticmethod
     def convert_label(label):
-        if label.lower() == 'incorrect':
+        label = label.strip()
+        if label.lower() == 'false':
             return 0
-        elif label.lower() == 'correct':
+        elif label.lower() == 'true':
             return 1
         else:
             raise ValueError("Invalid label!")
 
     def process_results(self, doc, results):
         prediction = np.argmax(results)
-        truth = self.convert_label(doc["label"])
+        truth = self.convert_label(self.doc_to_target(doc))
         print(f"Results: {results}, Prediction {prediction}, Truth: {truth}")
         return {"bacc": (prediction, truth),
                 "f1": (prediction, truth),

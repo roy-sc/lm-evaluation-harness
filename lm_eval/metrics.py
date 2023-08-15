@@ -5,6 +5,7 @@ import numpy as np
 import sacrebleu
 import sklearn.metrics
 import random
+from sklearn.metrics import f1_score, balanced_accuracy_score, precision_score, recall_score
 
 
 def mean(arr):
@@ -220,11 +221,11 @@ def bootstrap_stderr(f, xs, iters):
 
     print("bootstrapping for stddev:", f.__name__)
     for bootstrap in tqdm(
-        pool.imap(
-            _bootstrap_internal(f, chunk_size),
-            [(i, xs) for i in range(iters // chunk_size)],
-        ),
-        total=iters // chunk_size,
+            pool.imap(
+                _bootstrap_internal(f, chunk_size),
+                [(i, xs) for i in range(iters // chunk_size)],
+            ),
+            total=iters // chunk_size,
     ):
         # sample w replacement
         res.extend(bootstrap)
@@ -257,3 +258,23 @@ def yesno(x):
         return "yes"
     else:
         return "no"
+
+
+def complex_metric(preds, labels, average="micro", metric="bacc"):
+    match metric:
+        case "bacc":
+            return balanced_accuracy_score(y_true=labels, y_pred=preds)
+        case "f1":
+            return f1_score(y_true=labels, y_pred=preds, average=average)
+        case "precision":
+            return precision_score(y_true=labels, y_pred=preds, average=average)
+        case "recall":
+            return recall_score(y_true=labels, y_pred=preds, average=average)
+        case _:
+            raise ValueError(f" Unknown metric {metric}")
+
+
+def complex_metric_agg(metric, items):
+    predictions, references = zip(*items)
+
+    return complex_metric(preds=predictions, labels=references, average='binary', metric=metric)

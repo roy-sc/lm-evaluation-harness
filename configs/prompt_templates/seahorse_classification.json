@@ -1,0 +1,5 @@
+{
+  "stabilityai/StableBeluga": {
+    "attribution": "### System:\nYou are StableBeluga, an AI that follows instructions extremely well. Help as much as you can.\n\n### User: Given an article and its summary in {lang}, determine if all information in the summary is sourced from the article. Return True if it is, and False if not.\nArticle: {article}\nSummary: {summary}\n\n### Assistant:\n"
+  }
+}

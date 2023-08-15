@@ -19,6 +19,8 @@ def parse_args():
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--num_examples", type=int, default=1)
     parser.add_argument("--description_dict_path", default=None)
+    parser.add_argument("--model_id", default=None)
+    parser.add_argument("--prompt_version_per_task", default=None)
     return parser.parse_args()
 
 
@@ -30,7 +32,9 @@ def main():
         task_names = tasks.ALL_TASKS
     else:
         task_names = args.tasks.split(",")
-    task_dict = tasks.get_task_dict(task_names)
+
+    task_dict = tasks.get_task_dict(task_names, model_id=args.model_id,
+                                    prompt_version_per_task=args.prompt_version_per_task)
 
     description_dict = {}
     if args.description_dict_path:
@@ -63,9 +67,9 @@ def main():
 
         with open(os.path.join(args.output_base_path, task_name), "w") as f:
             for i, doc in (
-                zip(range(args.num_examples), docs)
-                if args.num_examples > 0
-                else enumerate(docs)
+                    zip(range(args.num_examples), docs)
+                    if args.num_examples > 0
+                    else enumerate(docs)
             ):
                 f.write(EXAMPLE_DIVIDER.format(i=i))
                 ctx = task.fewshot_context(
