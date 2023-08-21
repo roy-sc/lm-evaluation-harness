@@ -29,10 +29,10 @@ def _rouge_agg(key, items):
     return result
 
 
-class Newsum2021SummarizationTask(Task):
+class SwissText23SummarizationTask(Task):
     VERSION = 0
     # dataset as denoted in HuggingFace `datasets`.
-    DATASET_PATH = "mtc/newsum2021_filtered_200_samples_between_100_600_words_per_article"
+    DATASET_PATH = "mtc/swisstext23-20min-annotation-data"
     # `DATASET_PATH`. If there aren't specific subsets you need, leave this as `None`.
     DATASET_NAME = None
     LANGUAGE = "german"
@@ -75,7 +75,7 @@ class Newsum2021SummarizationTask(Task):
         return prompt
 
     def doc_to_target(self, doc):
-        summary = doc["highlights"]
+        summary = doc["summary"]
         return " " + summary
 
     def construct_requests(self, doc, ctx):
@@ -117,7 +117,7 @@ class Newsum2021SummarizationTask(Task):
         """
         assert len(results) == 1
 
-        prediction, reference = self.postprocess_text(results[0], doc["highlights"])
+        prediction, reference = self.postprocess_text(results[0], doc["summary"])
         article = doc["article"]
         fragment = Fragments(article, prediction, language=self.LANGUAGE)
 

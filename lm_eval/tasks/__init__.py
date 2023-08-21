@@ -69,7 +69,7 @@ from . import cnndm_paraphrase
 from . import factcc_hallucination_classification
 from . import frank_hallucination_classification
 from . import xsum_faith_hallucination_classification
-from . import newsum2021_summarization
+from . import swisstext23_summarization
 from . import seahorse_classification
 
 ########################################
@@ -330,7 +330,7 @@ TASK_REGISTRY = {
     "factcc_hallucination_classification": factcc_hallucination_classification.FactCCHallucinationClassificationTask,
     "frank_hallucination_classification": frank_hallucination_classification.FrankHallucinationClassificationTask,
     "xsum_faith_hallucination_classification": xsum_faith_hallucination_classification.XsumFaithHallucinationClassificationTask,
-    "newsum2021_summarization": newsum2021_summarization.Newsum2021SummarizationTask,
+    "swisstext23_summarization": swisstext23_summarization.SwissText23SummarizationTask,
     "seahorse_classification": seahorse_classification.SeahorseClassificationTask,
     # Requires manual download of data.
     # "storycloze_2016": storycloze.StoryCloze2016,
