@@ -7,7 +7,7 @@
     "2": "Erstelle eine Zusammenfassung vom folgenden Artikel in 2 oder 3 Sätzen:\nArtikel: {article}\nZusammenfassung:\n"
   },
    "google/flan-ul2": {
-    "1": "Generate a summary in German for the following article. The summary should be around 2 to 3 sentences.\nArticle: {article}\nSummary:\n",
+    "1": "Generate a concise summary in German for the following article. The summary should be around 2 to 3 sentences.\nArticle: {article}\nSummary:\n",
     "2": "Erstelle eine Zusammenfassung vom folgenden Artikel in 3 oder weniger Sätzen:\nArtikel: {article}\nZusammenfassung:\n"
   },
   "tiiuae/falcon": {
