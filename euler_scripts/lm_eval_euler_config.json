@@ -1,8 +1,8 @@
 {
     "load_modules": "gcc/8.2.0 python_gpu/3.11.2 eth_proxy",
-    "project_path": "/cluster/home/cribin/faithful-summarization/lm-evaluation-harness",
-    "code_path": "/cluster/home/cribin/faithful-summarization/lm-evaluation-harness",
-    "log_file_path": "/cluster/home/cribin/faithful-summarization/lm-evaluation-harness/euler_outputs/",
+    "project_path": "/cluster/home/roysc/lm-evaluation-harness",
+    "code_path": "/cluster/home/roysc/lm-evaluation-harness",
+    "log_file_path": "/cluster/home/roysc/lm-evaluation-harness/euler_outputs/",
     "num_cpus": 4,
     "run_duration_hours": "01:00",
     "shareholder_group": "es_mtc",

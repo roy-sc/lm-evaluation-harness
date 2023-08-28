@@ -70,6 +70,7 @@ from . import factcc_hallucination_classification
 from . import frank_hallucination_classification
 from . import xsum_faith_hallucination_classification
 from . import swisstext23_summarization
+from . import llm_summarization_mt
 from . import seahorse_classification
 
 ########################################
@@ -331,6 +332,8 @@ TASK_REGISTRY = {
     "frank_hallucination_classification": frank_hallucination_classification.FrankHallucinationClassificationTask,
     "xsum_faith_hallucination_classification": xsum_faith_hallucination_classification.XsumFaithHallucinationClassificationTask,
     "swisstext23_summarization": swisstext23_summarization.SwissText23SummarizationTask,
+    "summarization_20minutes": llm_summarization_mt.SummarizationTask(path="roysc/20minuten_sample_250"),
+    "summarization_20minutes_2": llm_summarization_mt.SummarizationTask(path="roysc/20minuten"),
     "seahorse_classification": seahorse_classification.SeahorseClassificationTask,
     # Requires manual download of data.
     # "storycloze_2016": storycloze.StoryCloze2016,

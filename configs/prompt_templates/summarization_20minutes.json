@@ -1,0 +1,20 @@
+{
+  "meta-llama/Llama-2": {
+    "1": "### System:\nYou are StableBeluga, an AI that follows instructions extremely well. Help as much as you can. Reply only German.\n\n### User: Generate a summary in German for the following article. The summary should be around 2 to 3 sentences.\nArticle: {article}\n\n### Assistant:\n"
+  },
+  "tiiuae/falcon": {
+    "1": "User: Generate a summary in German for the following article. The summary should be around 2 to 3 sentences.\nArticle: {article}\nAssistant:\n",
+    "2": "User: Erstelle eine Zusammenfassung vom folgenden Artikel in 3 oder weniger Sätzen:\nArtikel: {article}\nAssistant:\n",
+    "3": "### System:\nDu bist eine KI, die Anweisungen sehr gut befolgt. Alle Antworten MÜSSEN auf Deutsch sein.\n\n### Human: Erstellen Sie eine kurze Zusammenfassung in DEUTSCH mit weniger als 3 Sätzen für den folgenden Artikel.\nArticle: {article}\n\n### Assistant:\n",
+    "4": "User: Erstellen Sie eine kurze Zusammenfassung in DEUTSCH mit weniger als 3 Sätzen für den folgenden Artikel.\nArticle: {article}\n\n### Assistant:\n"
+
+  },
+  "bigscience/bloomz": {
+    "1": "Generate a summary in German for the following article. The summary should be around 2 to 3 sentences.\nArticle: {article}\nSummary:\n",
+    "2": "Erstelle eine Zusammenfassung vom folgenden Artikel in 2 oder 3 Sätzen:\nArtikel: {article}\nZusammenfassung:\n"
+  },
+   "google/flan-t5": {
+    "1": "Generate a summary in German for the following article. The summary should be around 2 to 3 sentences.\nArticle: {article}\nSummary:\n",
+    "2": "Erstelle eine Zusammenfassung vom folgenden Artikel in 3 oder weniger Sätzen:\nArtikel: {article}\nZusammenfassung:\n"
+  },
+}
