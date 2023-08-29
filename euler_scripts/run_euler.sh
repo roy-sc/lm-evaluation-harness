@@ -4,8 +4,8 @@
 
 # original example: bash run_euler.sh configs/flan_t5_inference_config.json data/inference.json
 
-# example: start locally (not on euler) inside the `euler_scripts` folder, and execute:
-# bash run_euler.sh lm_eval_euler_config.json configs/eval_config.yaml
+# example: start locally (not on euler) inside the `euler_scripts` folder, and execute: (no need for an inference.json)
+# bash run_euler.sh lm_eval_euler_config.json
 
 if [ -z "$1" ]
   then
@@ -45,6 +45,9 @@ if [ -z "$2" ]
   else
     scp ../"$2" euler:"$CODE_PATH"/"$2"
 fi
+
+#STR_COMMAND=$(python3 utils/bash_euler_commands_helper.py --config_path $1)
+#echo $STR_COMMAND
 
 ssh euler ARG1=\"$1\" \
           ARG4=\"$LOAD_MODULES\" \
