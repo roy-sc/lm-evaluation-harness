@@ -8,7 +8,7 @@
     "6": "Summarize the article: {article}",
     "7": "Fasse den Artikel zusammen: {article}",
     "8": "Summarize the news article: {article}",
-    "9": "Fassen Sie den Nachrichtenartikel zusammen: {article}",
+    "9": "Fassen Sie den Nachrichtenartikel zusammen: {article}"
   },
   "tiiuae/falcon": {
     "1": "Generate a summary in German for the following article. The summary should be around 2 to 3 sentences.\nArticle: {article}\nSummary:\n",
