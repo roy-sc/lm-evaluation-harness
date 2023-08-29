@@ -183,8 +183,12 @@ class SummarizationTaskBase(Task):
             "rouge1": True,
             "rouge2": True,
             "rougeL": True,
+            "bertscore_precision": True,
+            "bertscore_recall": True,
+            "bertscore_f1": True,
             "coverage": False,
-            "density": False
+            "density": False,
+            "compression": True,
         }
 
 
