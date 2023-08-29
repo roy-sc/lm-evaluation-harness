@@ -54,8 +54,8 @@ class SummarizationTaskBase(Task):
         f"Generate a summary in German for the following article. The summary should be around 3 to 5 sentences.\n"
         f"Article: {{article}}\n\nSummary:\n")
 
-    def __init__(self, path):
-        self.DATASET_PATH = path
+    def __init__(self, *args, **kwargs):
+        super(Task, self).__init__(*args, **kwargs)
 
     def has_training_docs(self):
         return True
