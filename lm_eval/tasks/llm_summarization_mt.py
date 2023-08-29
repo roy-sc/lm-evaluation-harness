@@ -55,7 +55,7 @@ class SummarizationTaskBase(Task):
         f"Article: {{article}}\n\nSummary:\n")
 
     def __init__(self, *args, **kwargs):
-        super(Task, self).__init__(*args, **kwargs)
+        super(SummarizationTaskBase, self).__init__(*args, **kwargs)
 
     def has_training_docs(self):
         return True
