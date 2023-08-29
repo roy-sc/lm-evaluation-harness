@@ -1,7 +1,4 @@
 {
-  "stabilityai/StableBeluga": {
-    "1": "### System:\nYou are StableBeluga, an AI that follows instructions extremely well. Help as much as you can. Reply only German.\n\n### User: Generate a summary in German for the following article. The summary should be around 2 to 3 sentences.\nArticle: {article}\n\n### Assistant:\n"
-  },
   "meta-llama/Llama-2": {
     "1": "Generate a summary in German for the following article. The summary should be around 2 to 3 sentences.\nArticle: {article}\nSummary:\n",
     "2": "Erstelle eine Zusammenfassung vom folgenden Artikel in 3 oder weniger Sätzen:\nArtikel: {article}\nZusammenfassung:\n",
@@ -50,7 +47,4 @@
     "1": "Generate a summary in German for the following article. The summary should be around 2 to 3 sentences.\nArticle: {article}\nSummary:\n",
     "2": "Erstelle eine Zusammenfassung vom folgenden Artikel in 3 oder weniger Sätzen:\nArtikel: {article}\nZusammenfassung:\n"
   },
-  "DAMO-NLP-MT/polylm": {
-    "1": "Generate a summary in German for the following article. The summary should be around 2 to 3 sentences.\nArticle: {article}\nSummary:\n"
-  }
 }

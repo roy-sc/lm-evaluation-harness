@@ -6,7 +6,7 @@ model: hf-causal-experimental #hf-seq2seq #hf-causal-experimental
 #google/flan-t5-xl (3B parameters), google/flan-t5-xxl (11B parameters)
 model_args: "pretrained=meta-llama/Llama-2-7b-chat-hf,trust_remote_code=True,use_accelerate=True" #,load_in_8bit=True"#,do_sample=True,temperature=0.2"
 tasks: "summarization_20minutes" #"germanquad_open_qa,x_stance_de,pawsx_de"
-prompt_version_per_task: "1,2,3,4,5,6,7,8,9" # also allows multiple values, e.g. "1,2,3"
+prompt_version_per_task: "4" # also allows multiple values, e.g. "1,2,3"
 num_fewshot: 0
 batch_size: "1"
 device: null
