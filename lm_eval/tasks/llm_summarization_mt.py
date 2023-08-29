@@ -42,7 +42,7 @@ def _bertscore_metric(predictions, references, type=None):
     return result[type]
 
 
-class SummarizationTask(Task):
+class SummarizationTaskBase(Task):
     VERSION = 0
     # dataset as denoted in HuggingFace `datasets`.
     DATASET_PATH = "roysc/20minuten_sample_250"
@@ -183,3 +183,13 @@ class SummarizationTask(Task):
             "coverage": False,
             "density": False
         }
+
+
+class SummarizationTask_20Minuten(SummarizationTaskBase):
+    VERSION = 0
+    DATASET_PATH = "roysc/20minuten_sample_250"
+
+
+class SummarizationTask_Klexikon(SummarizationTaskBase):
+    VERSION = 0
+    DATASET_PATH = "roysc/Klexikon_sample_250"

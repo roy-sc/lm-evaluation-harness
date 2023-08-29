@@ -332,8 +332,7 @@ TASK_REGISTRY = {
     "frank_hallucination_classification": frank_hallucination_classification.FrankHallucinationClassificationTask,
     "xsum_faith_hallucination_classification": xsum_faith_hallucination_classification.XsumFaithHallucinationClassificationTask,
     "swisstext23_summarization": swisstext23_summarization.SwissText23SummarizationTask,
-    "summarization_20minutes": llm_summarization_mt.SummarizationTask(path="roysc/20minuten_sample_250"),
-    "summarization_20minutes_2": llm_summarization_mt.SummarizationTask(path="roysc/20minuten"),
+    "SummarizationTask_20Minuten": llm_summarization_mt.SummarizationTask_20Minuten,
     "seahorse_classification": seahorse_classification.SeahorseClassificationTask,
     # Requires manual download of data.
     # "storycloze_2016": storycloze.StoryCloze2016,
