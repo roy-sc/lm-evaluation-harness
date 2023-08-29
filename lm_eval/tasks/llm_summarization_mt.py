@@ -4,6 +4,7 @@ The Task is based on the newsum2021 Dataset for summarization
 
 import evaluate
 import nltk
+import numpy as np
 
 from lm_eval.base import Task, rf
 from lm_eval.fragments import Fragments
@@ -147,9 +148,9 @@ class SummarizationTaskBase(Task):
             "rouge1": self.round_to_3_decimals(_rouge_metric(prediction, reference, "rouge1")),
             "rouge2": self.round_to_3_decimals(_rouge_metric(prediction, reference, "rouge2")),
             "rougeL": self.round_to_3_decimals(_rouge_metric(prediction, reference, "rougeL")),
-            "bertscore_precision": self.round_to_3_decimals(bertscore_result["precision"]),
-            "bertscore_recall": self.round_to_3_decimals(bertscore_result["recall"]),
-            "bertscore_f1": self.round_to_3_decimals(bertscore_result["f1"]),
+            "bertscore_precision": self.round_to_3_decimals(np.mean(bertscore_result["precision"])),
+            "bertscore_recall": self.round_to_3_decimals(np.mean(bertscore_result["recall"])),
+            "bertscore_f1": self.round_to_3_decimals(np.mean(bertscore_result["f1"])),
             'coverage': self.round_to_3_decimals(fragment.coverage()),
             'density': self.round_to_3_decimals(fragment.density()),
             'compression': self.round_to_3_decimals(fragment.compression())
