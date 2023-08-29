@@ -30,16 +30,16 @@ def _rouge_agg(key, items):
     return result
 
 
-def _bertscore_metric(predictions, references, type=None):
-    assert type in ["precision", "recall", "f1"]
+def _bertscore_metric(predictions, references, key=None):
+    assert key in ["precision", "recall", "f1", None]
     result = bertscore_metric.compute(
         predictions=[predictions],
         references=[references],
         model_type='microsoft/mdeberta-v3-base',
     )
-    if type is None:
+    if key is None:
         return result
-    return result[type]
+    return result[key]
 
 
 class SummarizationTaskBase(Task):
@@ -49,6 +49,9 @@ class SummarizationTaskBase(Task):
     # `DATASET_PATH`. If there aren't specific subsets you need, leave this as `None`.
     DATASET_NAME = None
     LANGUAGE = "german"
+    TRAINING_SPLIT = "train"
+    VALIDATION_SPLIT = "validation"
+    TEST_SPLIT = "test"
 
     default_prompt_template = (
         f"Generate a summary in German for the following article. The summary should be around 3 to 5 sentences.\n"
